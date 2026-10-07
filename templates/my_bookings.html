@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow-md p-6">
+    <div class="border-b pb-4 mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Riwayat Pesanan Saya</h1>
+            <p class="text-gray-600 text-sm">Daftar reservasi kamar hotel yang pernah Anda buat.</p>
+        </div>
+        <a href="{{ url_for('rooms') }}" class="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700">
+            + Pesan Kamar Lain
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wider border-b">
+                    <th class="py-3 px-4">ID Pesanan</th>
+                    <th class="py-3 px-4">Kamar</th>
+                    <th class="py-3 px-4">Tanggal Menginap</th>
+                    <th class="py-3 px-4">Total Biaya</th>
+                    <th class="py-3 px-4">Status Reservasi</th>
+                    <th class="py-3 px-4">Status Pembayaran</th>
+                    <th class="py-3 px-4 text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y text-sm text-gray-700">
+                {% for b in bookings %}
+                <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-bold">#RES-{{ b.id }}</td>
+                    <td class="py-3 px-4">
+                        <span class="font-semibold block">{{ b.room_type }}</span>
+                        <span class="text-xs text-gray-500">No. {{ b.room_number }}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        {{ b.check_in.strftime('%d %b %Y') }} - {{ b.check_out.strftime('%d %b %Y') }}
+                    </td>
+                    <td class="py-3 px-4 font-bold text-blue-900">{{ b.total_price | rupiah }}</td>
+                    <td class="py-3 px-4">
+                        {% if b.status == 'pending' %}
+                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2.5 py-1 rounded-full font-semibold">Pending</span>
+                        {% elif b.status == 'confirmed' %}
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-semibold">Terkonfirmasi</span>
+                        {% elif b.status == 'checked_in' %}
+                            <span class="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-semibold">Checked-In</span>
+                        {% elif b.status == 'checked_out' %}
+                            <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-full font-semibold">Checked-Out</span>
+                        {% else %}
+                            <span class="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-semibold">Dibatalkan</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4">
+                        {% if b.payment_status == 'paid' %}
+                            <span class="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-semibold">Lunas</span>
+                        {% else %}
+                            <span class="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-semibold">Belum Bayar</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <a href="{{ url_for('booking_detail', booking_id=b.id) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-semibold px-3 py-1.5 rounded transition">
+                            Detail
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="py-8 text-center text-gray-500">
+                        Anda belum memiliki riwayat reservasi. <a href="{{ url_for('rooms') }}" class="text-blue-600 underline">Pesan kamar sekarang</a>.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

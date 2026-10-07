@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Reservasi Hotel USTI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col font-sans">
+    <nav class="bg-blue-900 text-white shadow-md print:hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ url_for('index') }}" class="text-xl font-bold tracking-wide flex items-center gap-2">
+                    🏨 <span>Hotel Grand USTI</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('index') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Beranda</a>
+                    <a href="{{ url_for('rooms') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Katalog Kamar</a>
+                    {% if session.get('user_id') %}
+                        {% if session.get('user_role') == 'admin' %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium text-yellow-300">Admin Dashboard</a>
+                            <a href="{{ url_for('admin_rooms') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Kelola Kamar</a>
+                            <a href="{{ url_for('admin_reservations') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Kelola Reservasi</a>
+                            <a href="{{ url_for('admin_reports') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Laporan</a>
+                        {% else %}
+                            <a href="{{ url_for('my_bookings') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Pesanan Saya</a>
+                            <a href="{{ url_for('dashboard') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        {% endif %}
+                        <span class="text-xs bg-blue-800 px-3 py-1 rounded-full text-blue-200">
+                            {{ session.get('user_name') }} ({{ session.get('user_role') }})
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md text-sm font-medium">Keluar</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="hover:bg-blue-800 px-3 py-2 rounded-md text-sm font-medium">Masuk</a>
+                        <a href="{{ url_for('register') }}" class="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Daftar</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6 space-y-2 print:hidden">
+                    {% for category, message in messages %}
+                        {% set bg_style = 'bg-green-100 border-green-400 text-green-700' if category == 'success' else ('bg-red-100 border-red-400 text-red-700' if category == 'danger' else ('bg-yellow-100 border-yellow-400 text-yellow-700' if category == 'warning' else 'bg-blue-100 border-blue-400 text-blue-700')) %}
+                        <div class="{{ bg_style }} border px-4 py-3 rounded relative" role="alert">
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-4 text-center text-sm mt-auto print:hidden">
+        <p>&copy; 2026 Hotel Grand USTI - Proyek Aplikasi Web Reservasi Hotel.</p>
+    </footer>
+</body>
+</html>
